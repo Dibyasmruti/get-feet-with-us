@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Sales & Revenue - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-graph-up-arrow text-success me-2"></i> Sales & Revenue Reporting</h3>
+                <p class="text-muted small mb-0">Track product turnover, filter financial periods, and audit pending/paid manual transactions</p>
+            </div>
+            <div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold">
+                    Current Filter: <strong th:text="${filter.filterType}">THIS_MONTH</strong>
+                </span>
+            </div>
+        </div>
+
+        <!-- Filter Controls (FRD Section 23) -->
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 mb-4">
+            <div class="row g-3 align-items-center">
+                <!-- Quick Filter Buttons -->
+                <div class="col-lg-6">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a th:href="@{/admin/sales(filterType='THIS_MONTH')}" class="btn btn-sm rounded-pill px-3" th:classappend="${filter.filterType == 'THIS_MONTH' ? 'btn-success' : 'btn-outline-secondary'}">
+                            <i class="bi bi-calendar-month me-1"></i> This Month (Default)
+                        </a>
+                        <a th:href="@{/admin/sales(filterType='TODAY')}" class="btn btn-sm rounded-pill px-3" th:classappend="${filter.filterType == 'TODAY' ? 'btn-success' : 'btn-outline-secondary'}">
+                            <i class="bi bi-calendar-day me-1"></i> Today
+                        </a>
+                        <a th:href="@{/admin/sales(filterType='THIS_YEAR')}" class="btn btn-sm rounded-pill px-3" th:classappend="${filter.filterType == 'THIS_YEAR' ? 'btn-success' : 'btn-outline-secondary'}">
+                            <i class="bi bi-calendar3 me-1"></i> This Year
+                        </a>
+                        <a th:href="@{/admin/sales(filterType='ALL')}" class="btn btn-sm rounded-pill px-3" th:classappend="${filter.filterType == 'ALL' ? 'btn-success' : 'btn-outline-secondary'}">
+                            <i class="bi bi-infinity me-1"></i> All Sales
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Custom Date Range Filter (FRD Section 23: From Date, To Date, Go, Reset) -->
+                <div class="col-lg-6">
+                    <form th:action="@{/admin/sales}" method="get" class="d-flex gap-2 align-items-center justify-content-lg-end">
+                        <input type="hidden" name="filterType" value="CUSTOM">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light text-muted">From</span>
+                            <input type="date" name="fromDate" th:value="${filter.fromDate}" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-light text-muted">To</span>
+                            <input type="date" name="toDate" th:value="${filter.toDate}" class="form-control form-control-sm" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 text-nowrap fw-semibold">
+                            <i class="bi bi-arrow-right-circle me-1"></i> Go
+                        </button>
+                        <a th:href="@{/admin/sales}" class="btn btn-outline-secondary btn-sm rounded-pill px-3 text-nowrap" title="Reset to default (This Month)">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales KPI Summary Cards (FRD Section 24) -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-lg-3">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small fw-semibold">Total Orders</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${summary.totalOrders}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-orders mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-bag-check-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small fw-semibold">Total Sales Amount</span>
+                            <h3 class="fw-bold text-primary mb-0 mt-1">Rs. <span th:text="${summary.totalSales}">0.00</span></h3>
+                        </div>
+                        <div class="module-icon-box icon-sales mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small fw-semibold">Paid Amount (Confirmed)</span>
+                            <h3 class="fw-bold text-success mb-0 mt-1">Rs. <span th:text="${summary.paidAmount}">0.00</span></h3>
+                        </div>
+                        <div class="module-icon-box icon-diet mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small fw-semibold">Pending Amount</span>
+                            <h3 class="fw-bold text-warning mb-0 mt-1">Rs. <span th:text="${summary.pendingAmount}">0.00</span></h3>
+                        </div>
+                        <div class="module-icon-box icon-meetings mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Records Table (FRD Section 24) -->
+        <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold text-dark mb-0">Sales & Order Detailed Records</h5>
+                <span class="badge bg-light text-dark border small" th:text="${orders != null ? orders.size() + ' Records Found' : '0 Records'}">0 Records</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Order ID</th>
+                                <th>Order Date</th>
+                                <th>Customer Name</th>
+                                <th>Mobile Number</th>
+                                <th>Products & Quantity</th>
+                                <th>Order Amount</th>
+                                <th>Payment Status</th>
+                                <th>Order Status</th>
+                                <th class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ord : ${orders}">
+                                <td class="ps-4 fw-bold text-dark" th:text="${ord.orderId}">ORD10001</td>
+                                <td class="text-muted small" th:text="${#temporals.format(ord.orderDate, 'dd-MM-yyyy HH:mm')}">Date</td>
+                                <td class="fw-semibold text-dark" th:text="${ord.userName}">Name</td>
+                                <td class="text-muted small" th:text="${ord.userMobile}">9876543210</td>
+                                <td>
+                                    <div th:each="it : ${ord.items}" class="small">
+                                        <span th:text="${it.productName}">Product</span>
+                                        <span class="text-muted" th:text="'(x' + ${it.quantity} + ')'">(x1)</span>
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">Rs. <span th:text="${ord.grandTotal}">1,500</span></td>
+                                <td>
+                                    <span th:if="${ord.paymentStatus == 'Paid'}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill"><i class="bi bi-check2"></i> Paid</span>
+                                    <span th:unless="${ord.paymentStatus == 'Paid'}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-1 rounded-pill">Pending</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border px-3 py-1 rounded-pill" th:text="${ord.orderStatus}">Order Placed</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <a th:href="@{'/admin/orders/' + ${ord.orderId}}" class="btn btn-outline-primary btn-sm rounded-pill">
+                                        Manage
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:unless="${orders != null && !orders.isEmpty()}" class="p-5 text-center text-muted">
+                    <i class="bi bi-graph-down display-3 opacity-25 mb-2 d-block"></i>
+                    No sales records found for the selected time filter.
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Today\'s Diet')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-cup-hot-fill text-success me-2"></i> Today's Diet Plan</h3>
+                <p class="text-muted small mb-0">Follow nutritional advice and track your daily nutrition</p>
+            </div>
+            <a th:href="@{/dashboard}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="bi bi-arrow-left me-1"></i> Dashboard</a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Today's Diet Content Card -->
+        <div th:if="${diet != null}" class="card border-0 rounded-4 shadow-sm mb-4 overflow-hidden">
+            <div class="card-header bg-success text-white py-3 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0" th:text="${diet.title}">Balanced Wellness Meal Plan</h5>
+                <span class="badge bg-white text-success px-3 py-2 fw-semibold" th:text="${#temporals.format(diet.dietDate, 'dd MMMM yyyy')}">Date</span>
+            </div>
+            <div class="card-body p-4 p-md-5">
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="mb-4">
+                            <h6 class="text-success fw-bold text-uppercase small letter-spacing-1">Overview & Description</h6>
+                            <p class="fs-6 text-dark" th:text="${diet.description}">Nutritious and balanced plan...</p>
+                        </div>
+
+                        <div class="mb-4" th:if="${diet.instructions != null && !diet.instructions.isBlank()}">
+                            <h6 class="text-success fw-bold text-uppercase small letter-spacing-1">Daily Meal Instructions</h6>
+                            <div class="bg-light p-3 rounded-3 border-start border-success border-4" style="white-space: pre-line;" th:text="${diet.instructions}">
+                                Instructions here...
+                            </div>
+                        </div>
+
+                        <div class="mb-4" th:if="${diet.tips != null && !diet.tips.isBlank()}">
+                            <h6 class="text-success fw-bold text-uppercase small letter-spacing-1">Healthy Tips & Hydration</h6>
+                            <div class="p-3 rounded-3 bg-success-subtle text-success-emphasis" style="white-space: pre-line;" th:text="${diet.tips}">
+                                Tips here...
+                            </div>
+                        </div>
+
+                        <div th:if="${diet.otherInstructions != null && !diet.otherInstructions.isBlank()}">
+                            <h6 class="text-secondary fw-bold text-uppercase small letter-spacing-1">Other Dietary Notes</h6>
+                            <p class="text-muted small" th:text="${diet.otherInstructions}">Other notes...</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div th:if="${diet.imageUrl != null && !diet.imageUrl.isBlank()}" class="mb-4 rounded-4 overflow-hidden shadow-sm">
+                            <img th:src="${diet.imageUrl}" class="img-fluid w-100" alt="Diet Plan Image" style="max-height: 280px; object-fit: cover;">
+                        </div>
+                        <div th:if="${diet.videoUrl != null && !diet.videoUrl.isBlank()}" class="p-3 bg-dark text-white rounded-4 text-center">
+                            <i class="bi bi-play-circle-fill text-danger fs-1 mb-2 d-block"></i>
+                            <h6 class="fw-bold mb-2">Video Guidance Available</h6>
+                            <a th:href="${diet.videoUrl}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-4">
+                                <i class="bi bi-youtube me-1"></i> Watch Video Recipe
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${diet == null}" class="card border-0 rounded-4 shadow-sm p-5 text-center mb-4">
+            <i class="bi bi-cup-straw text-muted fs-1 mb-2"></i>
+            <h5 class="fw-bold text-dark">No Diet Plan Published Yet Today</h5>
+            <p class="text-muted">Please check back shortly as the administrator updates today's nutritional guidance.</p>
+        </div>
+
+        <!-- Bottom Section: Upload Today's Diet -->
+        <div class="card border-0 rounded-4 shadow-sm mb-4">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-cloud-arrow-up-fill text-success me-2"></i> Upload Today's Diet</h5>
+                <p class="text-muted small mb-0">Upload photo/record of your meals for administrator review and health tracking</p>
+            </div>
+            <div class="card-body p-4">
+                <form th:action="@{/diet/upload}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="dietId" th:value="${diet != null ? diet.dietId : ''}">
+                    <input type="hidden" name="dietTitle" th:value="${diet != null ? diet.title : 'General Diet Upload'}">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Select Meal Photo / Food Log File *</label>
+                            <input type="file" name="file" class="form-control" accept="image/*,application/pdf" required>
+                            <small class="text-muted">Supported formats: JPG, PNG, PDF (Max 50MB)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Notes / Food Description (Optional)</label>
+                            <input type="text" name="notes" class="form-control" placeholder="e.g. Breakfast oats with fruits, lunch grilled salad">
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-success px-4 py-2 fw-semibold rounded-pill shadow-sm">
+                                <i class="bi bi-upload me-1"></i> Submit Diet Upload
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- User Uploads History -->
+        <div th:if="${userUploads != null && !userUploads.isEmpty()}" class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history text-secondary me-2"></i> Your Recent Diet Uploads</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Diet Plan</th>
+                                <th>Notes</th>
+                                <th>Uploaded File</th>
+                                <th>Upload Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="upload : ${userUploads}">
+                                <td class="fw-semibold text-dark" th:text="${#temporals.format(upload.uploadDate, 'dd-MM-yyyy')}">01-01-2026</td>
+                                <td th:text="${upload.dietTitle != null ? upload.dietTitle : 'Daily Food Log'}">Title</td>
+                                <td class="text-muted" th:text="${upload.notes != null && !upload.notes.isBlank() ? upload.notes : 'No notes'}">Notes</td>
+                                <td>
+                                    <a th:href="${upload.filePath}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
+                                        <i class="bi bi-file-earmark-image me-1"></i> View File
+                                    </a>
+                                </td>
+                                <td class="small text-muted" th:text="${#temporals.format(upload.uploadTime, 'dd-MM-yyyy HH:mm')}">Time</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

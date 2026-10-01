@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('User Profile - ' + ${user.name})}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container-fluid px-4">
+        <!-- Breadcrumb & Actions -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <nav>
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-success text-decoration-none">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/users}" class="text-success text-decoration-none">Users</a></li>
+                    <li class="breadcrumb-item active" th:text="${user.userId}">USR1001</li>
+                </ol>
+            </nav>
+            <div>
+                <form th:action="@{'/admin/users/' + ${user.userId} + '/toggle'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm rounded-pill px-3 shadow-sm" th:classappend="${user.isActive ? 'btn-danger' : 'btn-success'}">
+                        <span th:text="${user.isActive ? 'Deactivate Account' : 'Activate Account'}">Toggle</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- User Profile Card -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 bg-white mb-4">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-2 text-center border-end">
+                    <div class="d-inline-flex p-4 rounded-circle bg-success text-white mb-2 shadow-sm">
+                        <i class="bi bi-person-fill display-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-0" th:text="${user.name}">John Doe</h5>
+                    <span class="badge bg-light text-muted border small mt-1" th:text="${user.userId}">USR1001</span>
+                </div>
+                <div class="col-md-10">
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-lg-3">
+                            <span class="text-muted small">Email Address</span>
+                            <p class="fw-semibold text-dark mb-0" th:text="${user.email}">email@example.com</p>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <span class="text-muted small">Mobile Number</span>
+                            <p class="fw-semibold text-dark mb-0" th:text="${user.mobileNumber}">9876543210</p>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <span class="text-muted small">Registration Date</span>
+                            <p class="fw-semibold text-dark mb-0" th:text="${#temporals.format(user.createdAt, 'dd-MM-yyyy HH:mm')}">Date</p>
+                        </div>
+                        <div class="col-sm-6 col-lg-3">
+                            <span class="text-muted small">Account Status</span>
+                            <p class="mb-0">
+                                <span th:if="${user.isActive}" class="badge bg-success">Active</span>
+                                <span th:unless="${user.isActive}" class="badge bg-danger">Deactivated</span>
+                            </p>
+                        </div>
+                        <div class="col-12">
+                            <span class="text-muted small">Registered Delivery Address & PIN</span>
+                            <p class="text-dark mb-0"><strong th:text="${user.address}">Address Line</strong>, PIN: <strong th:text="${user.pinCode}">751024</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Data Tabs (Diet Uploads, Fitness Completions, Orders) -->
+        <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-semibold" id="diet-tab" data-bs-toggle="tab" data-bs-target="#tab-diet" type="button">
+                    <i class="bi bi-cup-hot-fill me-1 text-success"></i> Diet Uploads (<span th:text="${userDietUploads != null ? userDietUploads.size() : 0}">0</span>)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-semibold" id="fitness-tab" data-bs-toggle="tab" data-bs-target="#tab-fitness" type="button">
+                    <i class="bi bi-activity me-1 text-danger"></i> Fitness Completions (<span th:text="${userCompletions != null ? userCompletions.size() : 0}">0</span>)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-semibold" id="orders-tab" data-bs-toggle="tab" data-bs-target="#tab-orders" type="button">
+                    <i class="bi bi-cart-check-fill me-1 text-primary"></i> Order History (<span th:text="${userOrders != null ? userOrders.size() : 0}">0</span>)
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="userTabsContent">
+            <!-- 1. Diet Uploads -->
+            <div class="tab-pane fade show active" id="tab-diet">
+                <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="table-responsive" th:if="${userDietUploads != null && !userDietUploads.isEmpty()}">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Date</th>
+                                        <th>Diet Plan</th>
+                                        <th>User Notes</th>
+                                        <th>Uploaded File</th>
+                                        <th>Upload Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="up : ${userDietUploads}">
+                                        <td class="ps-4 fw-semibold" th:text="${#temporals.format(up.uploadDate, 'dd-MM-yyyy')}">Date</td>
+                                        <td th:text="${up.dietTitle}">Diet Title</td>
+                                        <td class="text-muted" th:text="${up.notes != null ? up.notes : 'N/A'}">Notes</td>
+                                        <td>
+                                            <a th:href="${up.filePath}" target="_blank" class="btn btn-outline-primary btn-sm rounded-pill">
+                                                <i class="bi bi-box-arrow-up-right me-1"></i> View Photo/Doc
+                                            </a>
+                                        </td>
+                                        <td class="small text-muted" th:text="${#temporals.format(up.uploadTime, 'dd-MM-yyyy HH:mm')}">Timestamp</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:unless="${userDietUploads != null && !userDietUploads.isEmpty()}" class="p-4 text-center text-muted">
+                            No diet meal uploads submitted by this user yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Fitness Completions -->
+            <div class="tab-pane fade" id="tab-fitness">
+                <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="table-responsive" th:if="${userCompletions != null && !userCompletions.isEmpty()}">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Completion Date</th>
+                                        <th>Activity Name</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="fc : ${userCompletions}">
+                                        <td class="ps-4 fw-semibold" th:text="${#temporals.format(fc.completionDate, 'dd-MM-yyyy')}">Date</td>
+                                        <td class="fw-bold text-dark" th:text="${fc.fitnessTitle}">Title</td>
+                                        <td class="text-muted" th:text="${fc.completionTime}">Time</td>
+                                        <td><span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">COMPLETED</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:unless="${userCompletions != null && !userCompletions.isEmpty()}" class="p-4 text-center text-muted">
+                            No fitness activities completed yet by this user.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. User Orders -->
+            <div class="tab-pane fade" id="tab-orders">
+                <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="table-responsive" th:if="${userOrders != null && !userOrders.isEmpty()}">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Order ID</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Order Status</th>
+                                        <th>Payment Status</th>
+                                        <th class="text-end pe-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="ord : ${userOrders}">
+                                        <td class="ps-4 fw-bold text-dark" th:text="${ord.orderId}">ORD10001</td>
+                                        <td class="text-muted" th:text="${#temporals.format(ord.orderDate, 'dd-MM-yyyy')}">Date</td>
+                                        <td class="fw-bold text-success">Rs. <span th:text="${ord.grandTotal}">1,500</span></td>
+                                        <td><span class="badge bg-light text-dark border" th:text="${ord.orderStatus}">Order Placed</span></td>
+                                        <td>
+                                            <span th:if="${ord.paymentStatus == 'Paid'}" class="badge bg-success">Paid</span>
+                                            <span th:unless="${ord.paymentStatus == 'Paid'}" class="badge bg-secondary">Pending</span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <a th:href="@{'/admin/orders/' + ${ord.orderId}}" class="btn btn-outline-primary btn-sm rounded-pill">Manage Order</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:unless="${userOrders != null && !userOrders.isEmpty()}" class="p-4 text-center text-muted">
+                            No product orders placed by this user yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

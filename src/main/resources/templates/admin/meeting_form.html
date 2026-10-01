@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Schedule Meeting - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container py-2" style="max-width: 800px;">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-success text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/meetings}" class="text-success text-decoration-none">Meetings</a></li>
+                <li class="breadcrumb-item active" th:text="${meeting.id == null ? 'Schedule Meeting' : 'Edit Meeting'}">Form</li>
+            </ol>
+        </nav>
+
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 p-md-5">
+            <h4 class="fw-bold text-dark mb-4" th:text="${meeting.id == null ? 'Schedule Community Meeting' : 'Edit Meeting: ' + meeting.meetingId}">Meeting Form</h4>
+
+            <form th:action="@{/admin/meetings/save}" th:object="${meeting}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{meetingId}">
+                <input type="hidden" th:field="*{isCancelled}">
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Meeting Topic / Title *</label>
+                        <input type="text" th:field="*{topic}" class="form-control" placeholder="e.g. Live Q&A on Yoga Alignment & Posture" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Meeting Mode *</label>
+                        <select th:field="*{meetingMode}" class="form-select">
+                            <option value="Online">Online</option>
+                            <option value="Offline">Offline</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Host / Speaker Details *</label>
+                        <input type="text" th:field="*{hostDetails}" class="form-control" placeholder="e.g. Master Trainer Aditi & Dr. Roy" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Meeting Date *</label>
+                        <input type="date" th:field="*{meetingDate}" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Start Time *</label>
+                        <input type="time" th:field="*{startTime}" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Duration *</label>
+                        <input type="text" th:field="*{duration}" class="form-control" placeholder="e.g. 45 Mins" required>
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Online Meeting Link (Zoom/Google Meet/Teams)</label>
+                        <input type="url" th:field="*{meetingLink}" class="form-control" placeholder="https://meet.google.com/...">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Physical Venue / Address (for Offline/Hybrid)</label>
+                        <input type="text" th:field="*{meetingAddress}" class="form-control" placeholder="Studio 3B, Wellness Hub, Bhubaneswar">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Meeting Agenda *</label>
+                        <textarea th:field="*{agenda}" class="form-control" rows="3" placeholder="Key talking points, exercise routines, and session objectives" required></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Other Instructions for Attendees</label>
+                        <textarea th:field="*{otherDetails}" class="form-control" rows="2" placeholder="Please bring a yoga mat and water bottle"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{isActive}" id="activeSwitch">
+                            <label class="form-check-label fw-semibold" for="activeSwitch">Active / Visible to Members</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end mt-4">
+                        <a th:href="@{/admin/meetings}" class="btn btn-outline-secondary me-2 rounded-pill px-4">Cancel</a>
+                        <button type="submit" class="btn btn-warning text-dark rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Save Meeting
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

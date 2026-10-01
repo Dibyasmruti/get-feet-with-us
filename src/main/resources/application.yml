@@ -1,0 +1,38 @@
+﻿server:
+  port: 8085
+  servlet:
+    session:
+      timeout: 120m
+
+spring:
+  application:
+    name: get-feet-with-us
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/dibya002?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:Dibya@2001D}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+app:
+  upload:
+    dir: C:/Users/dibya/.gemini/antigravity/scratch/get-feet-with-us/uploads/
+
+logging:
+  level:
+    com.getfeetwithus: INFO
+    org.springframework.security: WARN

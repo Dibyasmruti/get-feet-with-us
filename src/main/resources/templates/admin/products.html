@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Product Management - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-box-seam text-primary me-2"></i> Product Catalog Management</h3>
+                <p class="text-muted small mb-0">Maintain health and wellness product catalog, pricing, availability, and usage guides</p>
+            </div>
+            <a th:href="@{/admin/products/new}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Add New Product
+            </a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Product ID</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Availability</th>
+                                <th>Catalog Status</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${products}">
+                                <td class="ps-4 fw-bold text-dark" th:text="${p.productId}">PRD101</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img th:if="${p.imageUrl != null && !p.imageUrl.isBlank()}" th:src="${p.imageUrl}" class="rounded-3 me-3" style="width: 44px; height: 44px; object-fit: cover;" alt="Product">
+                                        <div th:unless="${p.imageUrl != null && !p.imageUrl.isBlank()}" class="bg-light rounded-3 me-3 d-flex align-items-center justify-content-center text-muted" style="width: 44px; height: 44px;">
+                                            <i class="bi bi-box-seam"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0" th:text="${p.name}">Product Name</h6>
+                                            <small class="text-muted text-truncate d-inline-block" style="max-width: 250px;" th:text="${p.shortDescription}">Desc</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="fw-bold text-success">Rs. <span th:text="${p.price}">999</span></td>
+                                <td>
+                                    <form th:action="@{'/admin/products/toggle-avail/' + ${p.productId}}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm rounded-pill px-3 py-1" th:classappend="${p.isAvailable ? 'btn-success' : 'btn-outline-danger'}" title="Toggle Availability">
+                                            <span th:text="${p.isAvailable ? 'In Stock' : 'Out of Stock'}">Stock</span>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <span th:if="${p.isActive}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">Active</span>
+                                    <span th:unless="${p.isActive}" class="badge bg-secondary-subtle text-secondary border px-3 py-1 rounded-pill">Hidden</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{'/admin/products/edit/' + ${p.productId}}" class="btn btn-outline-primary rounded-pill me-1"><i class="bi bi-pencil me-1"></i> Edit</a>
+                                        <form th:action="@{'/admin/products/toggle/' + ${p.productId}}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm rounded-pill" th:classappend="${p.isActive ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                <span th:text="${p.isActive ? 'Deactivate' : 'Activate'}">Toggle</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Diet Plan Form - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container py-2" style="max-width: 800px;">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-success text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/diet}" class="text-success text-decoration-none">Diet Plans</a></li>
+                <li class="breadcrumb-item active" th:text="${diet.id == null ? 'Create Plan' : 'Edit Plan'}">Form</li>
+            </ol>
+        </nav>
+
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 p-md-5">
+            <h4 class="fw-bold text-dark mb-4" th:text="${diet.id == null ? 'Create Daily Diet Plan' : 'Edit Diet Plan: ' + diet.dietId}">Diet Plan Form</h4>
+
+            <form th:action="@{/admin/diet/save}" th:object="${diet}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{dietId}">
+                <input type="hidden" th:field="*{imageUrl}">
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Diet Plan Title *</label>
+                        <input type="text" th:field="*{title}" class="form-control" placeholder="e.g. High-Protein Muscle Recovery Plan" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Target Date *</label>
+                        <input type="date" th:field="*{dietDate}" class="form-control" required>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Overview / Short Description *</label>
+                        <textarea th:field="*{description}" class="form-control" rows="2" placeholder="Brief summary of today's nutrition strategy" required></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Detailed Meal Instructions *</label>
+                        <textarea th:field="*{instructions}" class="form-control" rows="4" placeholder="Breakfast: Oatmeal, Chia seeds, Berries&#10;Lunch: Brown rice, Grilled vegetables&#10;Dinner: Steamed broccoli, Lentil soup"></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Healthy Tips & Hydration</label>
+                        <textarea th:field="*{tips}" class="form-control" rows="3" placeholder="Drink 3L water, take 10 min post-meal walk"></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Other Instructions / Contraindications</label>
+                        <textarea th:field="*{otherInstructions}" class="form-control" rows="3" placeholder="Not recommended for diabetic members without prior consult"></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Upload Diet Image</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*">
+                        <small class="text-muted" th:if="${diet.imageUrl != null}">Current image is saved.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Video Guidance Link (YouTube/MP4)</label>
+                        <input type="url" th:field="*{videoUrl}" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{isActive}" id="activeSwitch">
+                            <label class="form-check-label fw-semibold" for="activeSwitch">Publish / Set as Active Plan</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end mt-4">
+                        <a th:href="@{/admin/diet}" class="btn btn-outline-secondary me-2 rounded-pill px-4">Cancel</a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Save Diet Plan
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="admin_navbar" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm border-bottom border-success">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/admin/dashboard}">
+            <i class="bi bi-shield-lock-fill text-success fs-3 me-2"></i>
+            <span>Get Feet With Us</span>
+            <span class="badge bg-warning text-dark ms-2">ADMIN PORTAL</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="adminNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/users}"><i class="bi bi-people-fill me-1"></i> Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/diet}"><i class="bi bi-cup-hot-fill me-1"></i> Diet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/fitness}"><i class="bi bi-activity me-1"></i> Fitness</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/products}"><i class="bi bi-box-seam me-1"></i> Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/orders}"><i class="bi bi-cart-check-fill me-1"></i> Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/meetings}"><i class="bi bi-calendar-event me-1"></i> Meetings</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/sales}"><i class="bi bi-graph-up-arrow me-1"></i> Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/about}"><i class="bi bi-building me-1"></i> About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/settings}"><i class="bi bi-gear-wide-connected me-1"></i> Settings</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-white-50 small me-2"><i class="bi bi-person-badge me-1"></i> Admin: <strong class="text-white" sec:authentication="name">Admin</strong></span>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

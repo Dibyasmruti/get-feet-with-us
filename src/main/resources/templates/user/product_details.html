@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header(${product.name})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dashboard}" class="text-decoration-none text-success">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/products}" class="text-decoration-none text-success">Products</a></li>
+                <li class="breadcrumb-item active" th:text="${product.name}">Product Details</li>
+            </ol>
+        </nav>
+
+        <div class="card border-0 rounded-4 shadow-sm overflow-hidden mb-4">
+            <div class="card-body p-4 p-md-5">
+                <div class="row g-5">
+                    <!-- Image -->
+                    <div class="col-lg-5">
+                        <div class="rounded-4 overflow-hidden bg-light p-3 text-center border">
+                            <img th:if="${product.imageUrl != null && !product.imageUrl.isBlank()}" th:src="${product.imageUrl}" class="img-fluid rounded-3" style="max-height: 380px; object-fit: contain;" alt="Product Image">
+                            <div th:unless="${product.imageUrl != null && !product.imageUrl.isBlank()}" class="py-5 text-muted">
+                                <i class="bi bi-box-seam display-1 opacity-25"></i>
+                                <p class="mt-2">No Image Provided</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="col-lg-7">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h2 class="fw-bold text-dark mb-0" th:text="${product.name}">Product Name</h2>
+                            <span th:if="${product.isAvailable}" class="badge bg-success px-3 py-2 rounded-pill">In Stock</span>
+                            <span th:unless="${product.isAvailable}" class="badge bg-danger px-3 py-2 rounded-pill">Out of Stock</span>
+                        </div>
+                        <p class="text-muted mb-3" th:text="${product.shortDescription}">Short description</p>
+
+                        <div class="display-6 fw-bold text-success mb-4">
+                            Rs. <span th:text="${product.price}">999.00</span>
+                        </div>
+
+                        <!-- Add to Cart Form -->
+                        <form th:if="${product.isAvailable}" th:action="@{/cart/add}" method="post" class="p-3 bg-light rounded-4 mb-4 border">
+                            <input type="hidden" name="productId" th:value="${product.productId}">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <label class="form-label fw-semibold mb-0">Select Quantity:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input type="number" name="quantity" class="form-control text-center" value="1" min="1" max="99" style="width: 80px;" required>
+                                </div>
+                                <div class="col">
+                                    <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm fw-semibold w-100">
+                                        <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Product Description -->
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-dark">About This Product</h5>
+                            <p class="text-muted" style="white-space: pre-line;" th:text="${product.description}">Full description here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-5">
+
+                <!-- Detailed Structured Information (FRD Section 6.2) -->
+                <div class="row g-4">
+                    <!-- Why to use -->
+                    <div class="col-md-4" th:if="${product.whyToUse != null && !product.whyToUse.isBlank()}">
+                        <div class="p-4 rounded-4 bg-light border h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-question-circle-fill text-success fs-4 me-2"></i>
+                                <h6 class="fw-bold text-dark mb-0">Why To Use</h6>
+                            </div>
+                            <p class="text-muted small mb-0" style="white-space: pre-line;" th:text="${product.whyToUse}">Benefits and value proposition.</p>
+                        </div>
+                    </div>
+
+                    <!-- Who can use -->
+                    <div class="col-md-4" th:if="${product.whoCanUse != null && !product.whoCanUse.isBlank()}">
+                        <div class="p-4 rounded-4 bg-light border h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-people-fill text-primary fs-4 me-2"></i>
+                                <h6 class="fw-bold text-dark mb-0">Who Can Use</h6>
+                            </div>
+                            <p class="text-muted small mb-0" style="white-space: pre-line;" th:text="${product.whoCanUse}">Target users and eligibility.</p>
+                        </div>
+                    </div>
+
+                    <!-- How to use -->
+                    <div class="col-md-4" th:if="${product.howToUse != null && !product.howToUse.isBlank()}">
+                        <div class="p-4 rounded-4 bg-light border h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-gear-fill text-warning fs-4 me-2"></i>
+                                <h6 class="fw-bold text-dark mb-0">How To Use</h6>
+                            </div>
+                            <p class="text-muted small mb-0" style="white-space: pre-line;" th:text="${product.howToUse}">Dosage, timing, and directions.</p>
+                        </div>
+                    </div>
+
+                    <!-- Other instructions -->
+                    <div class="col-12" th:if="${product.otherInstructions != null && !product.otherInstructions.isBlank()}">
+                        <div class="p-4 rounded-4 bg-light border">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle-fill text-info me-2"></i> Other Product Instructions</h6>
+                            <p class="text-muted small mb-0" style="white-space: pre-line;" th:text="${product.otherInstructions}">Storage and precautions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Admin Settings')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container py-2" style="max-width: 950px;">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-success text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active">Admin Settings & Security</li>
+            </ol>
+        </nav>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: Administrator Accounts Overview (FRD Section 14) -->
+            <div class="col-lg-6">
+                <div class="card border-0 rounded-4 shadow-sm bg-white p-4 h-100">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-shield-check text-success me-2"></i> Administrator Accounts</h5>
+                    <p class="text-muted small mb-3">The platform supports 3 primary administrator accounts with equal administrative permissions.</p>
+
+                    <div class="list-group list-group-flush mb-3">
+                        <div th:each="adm : ${allAdmins}" class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0" th:text="${adm.name}">Administrator Name</h6>
+                                <small class="text-muted"><span class="badge bg-dark me-1" th:text="${adm.adminId}">ADMIN001</span> <span th:text="${adm.email}">admin@getfeetwithus.com</span></small>
+                            </div>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Active</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 text-muted small mt-auto">
+                        <i class="bi bi-info-circle me-1 text-primary"></i> Current session: <strong class="text-dark" th:text="${currentAdmin != null ? currentAdmin.adminId : ''}">ADMIN001</strong> (<span th:text="${currentAdmin != null ? currentAdmin.name : ''}">Admin</span>)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Change Admin Password Form -->
+            <div class="col-lg-6">
+                <div class="card border-0 rounded-4 shadow-sm bg-white p-4 h-100">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-key-fill text-warning me-2"></i> Change Admin Password</h5>
+                    <p class="text-muted small mb-3">Update your administrative credentials securely.</p>
+
+                    <form th:action="@{/admin/settings/change-password}" th:object="${changeDto}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Current Password *</label>
+                            <input type="password" th:field="*{oldPassword}" class="form-control form-control-sm" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">New Password *</label>
+                            <input type="password" th:field="*{newPassword}" class="form-control form-control-sm" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Confirm New Password *</label>
+                            <input type="password" th:field="*{confirmPassword}" class="form-control form-control-sm" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning text-dark w-100 py-2 rounded-pill fw-bold shadow-sm mt-3">
+                            <i class="bi bi-shield-lock me-1"></i> Update Admin Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

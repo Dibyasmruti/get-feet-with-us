@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Organization Info - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container py-2" style="max-width: 850px;">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-success text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active">Organization & About Management</li>
+            </ol>
+        </nav>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 p-md-5">
+            <h4 class="fw-bold text-dark mb-4"><i class="bi bi-building text-info me-2"></i> Manage Organization Details</h4>
+
+            <form th:action="@{/admin/about/update}" th:object="${org}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{logoUrl}">
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Organization / Platform Name *</label>
+                        <input type="text" th:field="*{orgName}" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Upload New Logo</label>
+                        <input type="file" name="logoFile" class="form-control" accept="image/*">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">About Organization / Mission Statement *</label>
+                        <textarea th:field="*{aboutInfo}" class="form-control" rows="4" required></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Physical Headquarters Address *</label>
+                        <textarea th:field="*{address}" class="form-control" rows="2" required></textarea>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Official Contact Number</label>
+                        <input type="text" th:field="*{mobileNumber}" class="form-control" placeholder="+91 9876543210">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Official Support Email</label>
+                        <input type="email" th:field="*{email}" class="form-control" placeholder="support@getfeetwithus.com">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Official Website URL</label>
+                        <input type="url" th:field="*{website}" class="form-control" placeholder="https://www.getfeetwithus.com">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Other Organization Information / Notes</label>
+                        <textarea th:field="*{otherInfo}" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="col-12 text-end mt-4">
+                        <button type="submit" class="btn btn-info text-white rounded-pill px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Save Organization Info
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

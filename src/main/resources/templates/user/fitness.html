@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Fitness & Yoga')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-activity text-danger me-2"></i> Fitness & Yoga Routines</h3>
+                <p class="text-muted small mb-0">Follow guided workouts at home and track your daily completions</p>
+            </div>
+            <a th:href="@{/dashboard}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="bi bi-arrow-left me-1"></i> Dashboard</a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${infoMessage}" class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle-fill me-1"></i> <span th:text="${infoMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Activities Grid -->
+        <div class="row g-4 mb-5">
+            <div th:each="act : ${activities}" class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 rounded-4 shadow-sm overflow-hidden d-flex flex-column">
+                    <div class="position-relative">
+                        <img th:if="${act.imageUrl != null && !act.imageUrl.isBlank()}" th:src="${act.imageUrl}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="Fitness Image">
+                        <div th:unless="${act.imageUrl != null && !act.imageUrl.isBlank()}" class="bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center text-muted" style="height: 180px;">
+                            <i class="bi bi-activity fs-1 text-danger opacity-50"></i>
+                        </div>
+                        <span class="position-absolute top-0 start-0 m-3 badge bg-danger rounded-pill px-3 py-1 shadow-sm" th:text="${act.category != null ? act.category : 'General'}">Yoga</span>
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h5 class="fw-bold text-dark mb-2" th:text="${act.title}">Morning Surya Namaskar</h5>
+                        <p class="text-muted small flex-grow-1" th:text="${act.description}">Energizing full-body yoga flow.</p>
+
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-clock me-1 text-primary"></i> <span th:text="${act.duration != null ? act.duration : '15 mins'}">15 mins</span></span>
+                            <span class="badge bg-light text-dark border px-2 py-1"><i class="bi bi-arrow-repeat me-1 text-success"></i> <span th:text="${act.repetitions != null ? act.repetitions : '3 Sets'}">3 Sets</span></span>
+                        </div>
+
+                        <div th:if="${act.instructions != null && !act.instructions.isBlank()}" class="mb-3">
+                            <h6 class="text-secondary fw-semibold small mb-1">Instructions:</h6>
+                            <p class="small text-muted bg-light p-2 rounded-3 mb-0" th:text="${act.instructions}">Practice steps...</p>
+                        </div>
+
+                        <div class="mt-auto pt-2">
+                            <div th:if="${act.videoUrl != null && !act.videoUrl.isBlank()}" class="mb-2">
+                                <a th:href="${act.videoUrl}" target="_blank" class="btn btn-outline-danger btn-sm w-100 rounded-pill">
+                                    <i class="bi bi-play-btn-fill me-1"></i> Watch Video Guide
+                                </a>
+                            </div>
+
+                            <!-- Mark as Complete Button -->
+                            <div th:if="${completedIds.contains(act.fitnessId)}">
+                                <button class="btn btn-secondary btn-sm w-100 rounded-pill disabled" disabled>
+                                    <i class="bi bi-check2-all text-success me-1"></i> Completed Today
+                                </button>
+                            </div>
+                            <div th:unless="${completedIds.contains(act.fitnessId)}">
+                                <form th:action="@{'/fitness/complete/' + ${act.fitnessId}}" method="post">
+                                    <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill shadow-sm fw-semibold">
+                                        <i class="bi bi-check-circle me-1"></i> Mark as Complete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${activities == null || activities.isEmpty()}" class="col-12">
+                <div class="card border-0 rounded-4 shadow-sm p-5 text-center">
+                    <i class="bi bi-activity text-muted fs-1 mb-2"></i>
+                    <h5 class="fw-bold text-dark">No Fitness Activities Available</h5>
+                    <p class="text-muted">Activities will appear here once published by the administrator.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion History -->
+        <div th:if="${completionHistory != null && !completionHistory.isEmpty()}" class="card border-0 rounded-4 shadow-sm">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-trophy-fill text-warning me-2"></i> Your Practice Completion History</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity Name</th>
+                                <th>Time Completed</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="comp : ${completionHistory}">
+                                <td class="fw-semibold text-dark" th:text="${#temporals.format(comp.completionDate, 'dd-MM-yyyy')}">01-01-2026</td>
+                                <td class="fw-medium" th:text="${comp.fitnessTitle}">Surya Namaskar</td>
+                                <td class="text-muted" th:text="${comp.completionTime}">07:30</td>
+                                <td><span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill"><i class="bi bi-check2 me-1"></i> COMPLETED</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Account Settings')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dashboard}" class="text-decoration-none text-success">Dashboard</a></li>
+                <li class="breadcrumb-item active">Account Settings</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden mb-4">
+                    <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                        <h4 class="fw-bold text-dark mb-1"><i class="bi bi-gear-fill text-secondary me-2"></i> Account Information & Settings</h4>
+                        <p class="text-muted small">View your registration profile and manage your default delivery location</p>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <!-- Read-Only Account Identification Fields -->
+                        <div class="p-3 bg-light rounded-3 mb-4 border">
+                            <h6 class="fw-bold text-dark small text-uppercase mb-3"><i class="bi bi-lock-fill me-1 text-muted"></i> Read-Only Registration Data</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted mb-0">Unique User ID</label>
+                                    <p class="fw-bold text-dark mb-0 fs-6" th:text="${settingsDto.userId}">USR1001</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted mb-0">Full Name</label>
+                                    <p class="fw-bold text-dark mb-0" th:text="${settingsDto.name}">John Doe</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted mb-0">Email Address</label>
+                                    <p class="text-dark mb-0" th:text="${settingsDto.email}">john@example.com</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted mb-0">Mobile Number</label>
+                                    <p class="text-dark mb-0" th:text="${settingsDto.mobileNumber}">9876543210</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Editable Fields: Address and PIN Code (FRD Section 13) -->
+                        <form th:action="@{/settings/update}" th:object="${settingsDto}" method="post">
+                            <h6 class="fw-bold text-dark small text-uppercase mb-3"><i class="bi bi-pencil-square me-1 text-success"></i> Editable Address Information</h6>
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label class="form-label fw-semibold">Delivery Address *</label>
+                                    <textarea th:field="*{address}" class="form-control" rows="3" required placeholder="House number, Street, Area"></textarea>
+                                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">PIN Code *</label>
+                                    <input type="text" th:field="*{pinCode}" class="form-control" required maxlength="6" placeholder="6 digits">
+                                    <div class="text-danger small mt-1" th:if="${#fields.hasErrors('pinCode')}" th:errors="*{pinCode}"></div>
+                                </div>
+
+                                <div class="col-12 mt-4 text-end">
+                                    <button type="submit" class="btn btn-success px-4 py-2 fw-semibold rounded-pill shadow-sm">
+                                        <i class="bi bi-check2-circle me-1"></i> Update Address & PIN Code
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

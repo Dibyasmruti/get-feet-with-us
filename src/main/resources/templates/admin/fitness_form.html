@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Fitness Routine Form - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container py-2" style="max-width: 800px;">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-success text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/admin/fitness}" class="text-success text-decoration-none">Fitness Activities</a></li>
+                <li class="breadcrumb-item active" th:text="${activity.id == null ? 'Create Activity' : 'Edit Activity'}">Form</li>
+            </ol>
+        </nav>
+
+        <div class="card border-0 rounded-4 shadow-sm bg-white p-4 p-md-5">
+            <h4 class="fw-bold text-dark mb-4" th:text="${activity.id == null ? 'Add Fitness / Yoga Routine' : 'Edit Activity: ' + activity.fitnessId}">Activity Form</h4>
+
+            <form th:action="@{/admin/fitness/save}" th:object="${activity}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{fitnessId}">
+                <input type="hidden" th:field="*{imageUrl}">
+
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label class="form-label fw-semibold">Activity Title *</label>
+                        <input type="text" th:field="*{title}" class="form-control" placeholder="e.g. Vinyasa Flow for Core Strength" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Category *</label>
+                        <select th:field="*{category}" class="form-select">
+                            <option value="Yoga">Yoga</option>
+                            <option value="Cardio">Cardio</option>
+                            <option value="Strength">Strength</option>
+                            <option value="Flexibility">Flexibility</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Duration *</label>
+                        <input type="text" th:field="*{duration}" class="form-control" placeholder="e.g. 20 Mins" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Repetition / Sets Information *</label>
+                        <input type="text" th:field="*{repetitions}" class="form-control" placeholder="e.g. 3 Sets x 12 Reps" required>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Description *</label>
+                        <textarea th:field="*{description}" class="form-control" rows="2" placeholder="Brief summary and target muscle groups" required></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Detailed Exercise Instructions *</label>
+                        <textarea th:field="*{instructions}" class="form-control" rows="4" placeholder="Step 1: Stand tall with feet together&#10;Step 2: Inhale and raise arms overhead&#10;Step 3: Exhale into forward bend"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Other Practice Instructions / Precautions</label>
+                        <textarea th:field="*{otherInstructions}" class="form-control" rows="2" placeholder="Warm up for 5 mins before starting. Keep back straight."></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Upload Activity Image</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*">
+                        <small class="text-muted" th:if="${activity.imageUrl != null}">Current image saved.</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Video Demonstration URL (YouTube/MP4)</label>
+                        <input type="url" th:field="*{videoUrl}" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check form-switch mt-2">
+                            <input class="form-check-input" type="checkbox" th:field="*{isActive}" id="activeSwitch">
+                            <label class="form-check-label fw-semibold" for="activeSwitch">Publish / Set Activity as Active</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end mt-4">
+                        <a th:href="@{/admin/fitness}" class="btn btn-outline-secondary me-2 rounded-pill px-4">Cancel</a>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                            <i class="bi bi-check2-circle me-1"></i> Save Activity
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

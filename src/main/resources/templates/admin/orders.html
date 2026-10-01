@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Order Management - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-cart-check-fill text-warning me-2"></i> Admin Order Management</h3>
+                <p class="text-muted small mb-0">Review separate customer order cards, update dispatch states, and confirm manual payments</p>
+            </div>
+            <div>
+                <span class="badge bg-white text-dark border px-3 py-2 rounded-pill fs-6 shadow-sm">
+                    Total Orders: <strong class="text-primary" th:text="${orders != null ? orders.size() : 0}">0</strong>
+                </span>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Orders Grid (FRD Section 20: Displayed in separate boxes/cards) -->
+        <div th:if="${orders != null && !orders.isEmpty()}" class="row g-4">
+            <div th:each="o : ${orders}" class="col-md-6 col-lg-4 col-xl-3">
+                <a th:href="@{'/admin/orders/' + ${o.orderId}}" class="text-decoration-none">
+                    <div class="order-card-box p-4 h-100 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="badge bg-dark px-3 py-1 rounded-pill fw-bold" th:text="'Order #' + ${o.orderId}">#ORD0001</span>
+                            <span th:if="${o.paymentStatus == 'Paid'}" class="badge bg-success"><i class="bi bi-check2"></i> Paid</span>
+                            <span th:unless="${o.paymentStatus == 'Paid'}" class="badge bg-secondary">Pending</span>
+                        </div>
+
+                        <div class="my-2 flex-grow-1">
+                            <h6 class="fw-bold text-dark mb-1" th:text="${o.userName}">Customer Name</h6>
+                            <p class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i> <span th:text="${o.userMobile}">9876543210</span></p>
+                            <p class="text-muted extra-small mb-1"><i class="bi bi-calendar3 me-1"></i> <span th:text="${#temporals.format(o.orderDate, 'dd-MM-yyyy HH:mm')}">30-09-2026</span></p>
+                        </div>
+
+                        <div class="pt-3 border-top mt-auto d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-muted extra-small d-block">Amount</span>
+                                <span class="fw-bold text-success fs-5">Rs. <span th:text="${o.grandTotal}">1,500</span></span>
+                            </div>
+                            <div class="text-end">
+                                <span th:if="${o.orderStatus == 'Order Placed'}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Order Placed</span>
+                                <span th:if="${o.orderStatus == 'Payment'}" class="badge bg-info-subtle text-info-emphasis border border-info-subtle">Payment</span>
+                                <span th:if="${o.orderStatus == 'Order Delivered'}" class="badge bg-success-subtle text-success border border-success-subtle">Delivered</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div th:unless="${orders != null && !orders.isEmpty()}" class="card border-0 rounded-4 shadow-sm p-5 text-center bg-white">
+            <i class="bi bi-cart-x text-muted display-2 mb-3"></i>
+            <h5 class="fw-bold text-dark">No Customer Orders Received Yet</h5>
+            <p class="text-muted">Customer orders will appear here automatically as distinct cards.</p>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

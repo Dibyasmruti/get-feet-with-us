@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('User Dashboard')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-content py-5">
+    <div class="container">
+        <!-- Welcome Banner -->
+        <div class="p-4 p-md-5 mb-4 rounded-4 bg-white shadow-sm border-start border-success border-5">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-semibold mb-2">Welcome Back</span>
+                    <h2 class="fw-bold text-dark mb-1">Hello, <span th:text="${currentUser != null ? currentUser.name : 'Member'}">Member</span>!</h2>
+                    <p class="text-muted mb-0">User ID: <strong class="text-dark" th:text="${currentUser != null ? currentUser.userId : ''}">USR1001</strong> | Today: <span class="fw-medium text-dark" th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Date</span></p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    <a th:href="@{/diet}" class="btn btn-success px-4 py-2 rounded-pill fw-semibold shadow-sm">
+                        <i class="bi bi-cup-hot me-1"></i> Today's Diet Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="fw-bold text-dark mb-1">Explore Wellness Modules</h4>
+            <p class="text-muted small">Choose any of the 6 core pillars of your healthy routine</p>
+        </div>
+
+        <!-- 6 Main Modules Grid -->
+        <div class="row g-4">
+            <!-- 1. Today's Diet -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-module-card p-4">
+                    <div class="module-icon-box icon-diet">
+                        <i class="bi bi-cup-hot-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">1. Today's Diet</h5>
+                    <p class="text-muted small mb-3">View daily balanced nutritional plans, meals guidance, recipes, and upload your food log.</p>
+                    <a th:href="@{/diet}" class="btn btn-outline-success btn-sm fw-semibold w-100 rounded-pill">
+                        Open Diet Guide <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. Fitness & Yoga -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-module-card p-4">
+                    <div class="module-icon-box icon-fitness">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">2. Fitness & Yoga</h5>
+                    <p class="text-muted small mb-3">Daily curated yoga and exercise routines. Practice at home and mark activities complete.</p>
+                    <a th:href="@{/fitness}" class="btn btn-outline-danger btn-sm fw-semibold w-100 rounded-pill">
+                        Start Workout <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 3. Products -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-module-card p-4">
+                    <div class="module-icon-box icon-products">
+                        <i class="bi bi-bag-check-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">3. Products</h5>
+                    <p class="text-muted small mb-3">Browse health and wellness supplements, organic gear, add to cart, and place orders.</p>
+                    <a th:href="@{/products}" class="btn btn-outline-primary btn-sm fw-semibold w-100 rounded-pill">
+                        Browse Products <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 4. Meeting -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-module-card p-4 position-relative">
+                    <span th:if="${hasTodayMeeting}" class="position-absolute top-0 end-0 mt-3 me-3 badge bg-danger rounded-pill">
+                        <i class="bi bi-broadcast me-1"></i> Live Today
+                    </span>
+                    <div class="module-icon-box icon-meetings">
+                        <i class="bi bi-calendar-event-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">
+                        4. Meeting
+                        <span th:if="${hasTodayMeeting}" class="text-danger fs-6 ms-1"><i class="bi bi-circle-fill"></i></span>
+                    </h5>
+                    <p class="text-muted small mb-3">Join today's live health sessions, hybrid workshops, and view full archive of past meetings.</p>
+                    <a th:href="@{/meetings}" class="btn btn-outline-warning btn-sm fw-semibold w-100 rounded-pill text-dark">
+                        View Meetings <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. About -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-module-card p-4">
+                    <div class="module-icon-box icon-about">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">5. About Us</h5>
+                    <p class="text-muted small mb-3">Learn about our organization, mission, trainers, official contact numbers, and address.</p>
+                    <a th:href="@{/about}" class="btn btn-outline-info btn-sm fw-semibold w-100 rounded-pill text-dark">
+                        Learn More <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 6. Settings -->
+            <div class="col-md-6 col-lg-4">
+                <div class="dashboard-module-card p-4">
+                    <div class="module-icon-box icon-settings">
+                        <i class="bi bi-gear-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">6. Settings</h5>
+                    <p class="text-muted small mb-3">View your registration profile and update your default delivery address and PIN code.</p>
+                    <a th:href="@{/settings}" class="btn btn-outline-secondary btn-sm fw-semibold w-100 rounded-pill">
+                        Account Settings <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Administrator Login')}"></head>
+<body class="bg-dark text-light d-flex flex-column min-vh-100">
+<div class="container my-auto py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex p-3 rounded-circle bg-warning text-dark mb-2 shadow">
+                    <i class="bi bi-shield-lock-fill fs-1"></i>
+                </div>
+                <h3 class="fw-bold text-white">Get Feet With Us</h3>
+                <span class="badge bg-warning text-dark px-3 py-2 fs-6">ADMINISTRATOR PORTAL</span>
+            </div>
+
+            <div class="card shadow border-0 rounded-4 bg-secondary bg-opacity-25 text-white">
+                <div class="card-body p-4">
+                    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i> <span th:text="${errorMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <form th:action="@{/perform-login}" method="post">
+                        <input type="hidden" name="isAdmin" value="true">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-white">Admin ID (e.g. ADMIN001)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-person-badge"></i></span>
+                                <input type="text" name="username" class="form-control bg-dark border-secondary text-light" placeholder="ADMIN001 / ADMIN002 / ADMIN003" required autofocus>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label fw-semibold text-white mb-0">Password</label>
+                                <a th:href="@{/admin/forgot-password}" class="text-decoration-none small text-warning">Forgot?</a>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-light"><i class="bi bi-lock"></i></span>
+                                <input type="password" name="password" class="form-control bg-dark border-secondary text-light" placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning text-dark w-100 py-2 fw-bold rounded-3 mb-3 shadow">
+                            <i class="bi bi-shield-check me-1"></i> Admin Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a th:href="@{/login}" class="text-light text-opacity-75 small text-decoration-none">
+                    <i class="bi bi-arrow-left me-1"></i> Back to User Portal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer py-3 mt-auto bg-black text-center text-muted small">
+    &copy; 2026 Get Feet With Us. Administrator Access Control.
+</footer>
+</body>
+</html>

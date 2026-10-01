@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Admin Dashboard')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container-fluid px-4">
+        <!-- Welcome Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1">Administrative Control Center</h3>
+                <p class="text-muted small mb-0">Logged in as Administrator: <strong class="text-dark" th:text="${adminId}">ADMIN001</strong></p>
+            </div>
+            <div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold">
+                    <i class="bi bi-circle-fill fs-8 me-1 text-success"></i> System Operational
+                </span>
+            </div>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-sm-6 col-xl-2">
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-semibold">Total Users</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalUsers}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-users mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-2">
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-semibold">Diet Plans</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalDietPlans}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-diet mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-cup-hot-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-2">
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-semibold">Activities</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalActivities}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-fitness mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-activity"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-2">
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-semibold">Products</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalProducts}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-products mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-2">
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-semibold">Total Orders</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${totalOrders}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-orders mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-cart-check-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-xl-2">
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white h-100">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small fw-semibold">Today's Sessions</span>
+                            <h3 class="fw-bold text-dark mb-0 mt-1" th:text="${todayMeetings}">0</h3>
+                        </div>
+                        <div class="module-icon-box icon-meetings mb-0" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales KPI Quick Preview (This Month Default) -->
+        <div class="card border-0 rounded-4 shadow-sm p-4 mb-4 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up-arrow text-success me-2"></i> This Month Sales Snapshot</h5>
+                <a th:href="@{/admin/sales}" class="btn btn-outline-success btn-sm rounded-pill">Open Sales Module <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small">This Month Orders</span>
+                        <h4 class="fw-bold text-dark mt-1 mb-0" th:text="${salesSummary.totalOrders}">0</h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small">Total Sales Volume</span>
+                        <h4 class="fw-bold text-dark mt-1 mb-0">Rs. <span th:text="${salesSummary.totalSales}">0.00</span></h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small">Paid Amount (Confirmed)</span>
+                        <h4 class="fw-bold text-success mt-1 mb-0">Rs. <span th:text="${salesSummary.paidAmount}">0.00</span></h4>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-3 rounded-3 bg-light border">
+                        <span class="text-muted small">Pending Amount</span>
+                        <h4 class="fw-bold text-warning mt-1 mb-0">Rs. <span th:text="${salesSummary.pendingAmount}">0.00</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Navigation Hub -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100">
+                    <h5 class="fw-bold text-dark mb-3">Recent Customer Orders</h5>
+                    <div class="table-responsive" th:if="${recentOrders != null && !recentOrders.isEmpty()}">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ro : ${recentOrders}">
+                                    <td class="fw-bold text-dark" th:text="${ro.orderId}">ORD10001</td>
+                                    <td th:text="${ro.userName}">Name</td>
+                                    <td class="fw-bold text-success">Rs. <span th:text="${ro.grandTotal}">1,500</span></td>
+                                    <td><span class="badge bg-light text-dark border" th:text="${ro.orderStatus}">Order Placed</span></td>
+                                    <td>
+                                        <span th:if="${ro.paymentStatus == 'Paid'}" class="badge bg-success">Paid</span>
+                                        <span th:unless="${ro.paymentStatus == 'Paid'}" class="badge bg-secondary">Pending</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a th:href="@{'/admin/orders/' + ${ro.orderId}}" class="btn btn-outline-primary btn-sm rounded-pill">Manage</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:unless="${recentOrders != null && !recentOrders.isEmpty()}" class="p-4 text-center text-muted">
+                        No orders recorded yet.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 rounded-4 shadow-sm p-4 bg-white h-100">
+                    <h5 class="fw-bold text-dark mb-3">Admin Quick Actions</h5>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/admin/diet/new}" class="btn btn-outline-success text-start py-2 rounded-3"><i class="bi bi-plus-circle me-2"></i> Add Daily Diet Plan</a>
+                        <a th:href="@{/admin/fitness/new}" class="btn btn-outline-danger text-start py-2 rounded-3"><i class="bi bi-plus-circle me-2"></i> Add Fitness / Yoga Routine</a>
+                        <a th:href="@{/admin/products/new}" class="btn btn-outline-primary text-start py-2 rounded-3"><i class="bi bi-plus-circle me-2"></i> Add New Product</a>
+                        <a th:href="@{/admin/meetings/new}" class="btn btn-outline-warning text-dark text-start py-2 rounded-3"><i class="bi bi-calendar-plus me-2"></i> Schedule Meeting</a>
+                        <a th:href="@{/admin/about}" class="btn btn-outline-info text-dark text-start py-2 rounded-3"><i class="bi bi-pencil-square me-2"></i> Update Organization Info</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

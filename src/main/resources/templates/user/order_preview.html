@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Order Preview')}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/dashboard}" class="text-decoration-none text-success">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/cart}" class="text-decoration-none text-success">Cart</a></li>
+                <li class="breadcrumb-item active">Order Preview & Delivery Address</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Left: Order Items Summary -->
+            <div class="col-lg-7">
+                <div class="card border-0 rounded-4 shadow-sm overflow-hidden mb-4">
+                    <div class="card-header bg-white border-0 pt-4 px-4">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-card-checklist text-success me-2"></i> Selected Order Items</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Unit Price</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${selectedItems}">
+                                        <td>
+                                            <h6 class="fw-semibold text-dark mb-0" th:text="${item.productName}">Product</h6>
+                                            <small class="text-muted" th:text="${item.productId}">PRD101</small>
+                                        </td>
+                                        <td class="text-muted">Rs. <span th:text="${item.productPrice}">100</span></td>
+                                        <td class="text-center fw-bold" th:text="${item.quantity}">1</td>
+                                        <td class="text-end fw-bold text-success">Rs. <span th:text="${item.itemTotal}">100</span></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-light">
+                                        <td colspan="3" class="text-end fw-bold fs-6">Grand Total:</td>
+                                        <td class="text-end fw-bold text-success fs-5">Rs. <span th:text="${grandTotal}">0.00</span></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Delivery Address & Confirm Form -->
+            <div class="col-lg-5">
+                <div class="card border-0 rounded-4 shadow-sm p-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-truck text-primary me-2"></i> Confirm Delivery Address</h5>
+                    <p class="text-muted small mb-3">Pre-filled with your registration address. You can modify any fields before confirming.</p>
+
+                    <form th:action="@{/order/confirm}" th:object="${orderDto}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Recipient Name *</label>
+                            <input type="text" th:field="*{customerName}" class="form-control form-control-sm" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('customerName')}" th:errors="*{customerName}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Contact Mobile *</label>
+                            <input type="text" th:field="*{mobileNumber}" class="form-control form-control-sm" required maxlength="10">
+                            <div class="text-danger small" th:if="${#fields.hasErrors('mobileNumber')}" th:errors="*{mobileNumber}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">House / Street / Address *</label>
+                            <input type="text" th:field="*{addressLine}" class="form-control form-control-sm" required>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('addressLine')}" th:errors="*{addressLine}"></div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">At / Locality</label>
+                                <input type="text" th:field="*{atLocality}" class="form-control form-control-sm" placeholder="Locality">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Post Office (PO)</label>
+                                <input type="text" th:field="*{postOffice}" class="form-control form-control-sm" placeholder="PO">
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">District</label>
+                                <input type="text" th:field="*{district}" class="form-control form-control-sm" placeholder="District">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">State</label>
+                                <input type="text" th:field="*{state}" class="form-control form-control-sm" placeholder="State">
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">PIN Code *</label>
+                                <input type="text" th:field="*{pinCode}" class="form-control form-control-sm" required maxlength="6">
+                                <div class="text-danger small" th:if="${#fields.hasErrors('pinCode')}" th:errors="*{pinCode}"></div>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-semibold small">Nearby Landmark</label>
+                                <input type="text" th:field="*{nearbyPlace}" class="form-control form-control-sm" placeholder="e.g. Near park">
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/cart}" class="btn btn-outline-secondary py-2 rounded-pill w-50">Back to Cart</a>
+                            <button type="submit" class="btn btn-success py-2 fw-semibold rounded-pill w-50 shadow-sm">
+                                <i class="bi bi-check2-circle me-1"></i> Confirm Order
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Fitness Management - Admin')}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<nav th:replace="~{fragments/admin_navbar :: admin_navbar}"></nav>
+
+<main class="main-content py-4">
+    <div class="container-fluid px-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold text-dark mb-1"><i class="bi bi-activity text-danger me-2"></i> Fitness & Yoga Management</h3>
+                <p class="text-muted small mb-0">Manage guided workouts, home exercises, and monitor member completion records</p>
+            </div>
+            <a th:href="@{/admin/fitness/new}" class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Add New Activity
+            </a>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Tabs: Activities & Completion Records -->
+        <ul class="nav nav-tabs mb-4" id="fitnessTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active fw-semibold" id="act-tab" data-bs-toggle="tab" data-bs-target="#tab-act" type="button">
+                    <i class="bi bi-list-task me-1"></i> Fitness Activities (<span th:text="${activities != null ? activities.size() : 0}">0</span>)
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link fw-semibold" id="comp-tab" data-bs-toggle="tab" data-bs-target="#tab-comp" type="button">
+                    <i class="bi bi-check2-all me-1 text-success"></i> Member Completion Logs (<span th:text="${completions != null ? completions.size() : 0}">0</span>)
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="fitnessTabsContent">
+            <!-- 1. Activities List -->
+            <div class="tab-pane fade show active" id="tab-act">
+                <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Activity ID</th>
+                                        <th>Category</th>
+                                        <th>Title</th>
+                                        <th>Duration / Reps</th>
+                                        <th>Media</th>
+                                        <th>Status</th>
+                                        <th class="text-end pe-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="a : ${activities}">
+                                        <td class="ps-4 fw-bold text-dark" th:text="${a.fitnessId}">FIT101</td>
+                                        <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill" th:text="${a.category}">Yoga</span></td>
+                                        <td>
+                                            <h6 class="fw-bold text-dark mb-0" th:text="${a.title}">Title</h6>
+                                            <small class="text-muted text-truncate d-inline-block" style="max-width: 250px;" th:text="${a.description}">Desc</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border me-1" th:text="${a.duration}">15 mins</span>
+                                            <span class="badge bg-light text-dark border" th:text="${a.repetitions}">3 Sets</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${a.imageUrl != null}" class="badge bg-light text-dark border me-1"><i class="bi bi-image"></i> Image</span>
+                                            <span th:if="${a.videoUrl != null && !a.videoUrl.isBlank()}" class="badge bg-danger-subtle text-danger"><i class="bi bi-play-circle"></i> Video</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${a.isActive}" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">Active</span>
+                                            <span th:unless="${a.isActive}" class="badge bg-secondary-subtle text-secondary border px-3 py-1 rounded-pill">Inactive</span>
+                                        </td>
+                                        <td class="text-end pe-4">
+                                            <div class="btn-group btn-group-sm">
+                                                <a th:href="@{'/admin/fitness/edit/' + ${a.fitnessId}}" class="btn btn-outline-primary rounded-pill me-1"><i class="bi bi-pencil me-1"></i> Edit</a>
+                                                <form th:action="@{'/admin/fitness/toggle/' + ${a.fitnessId}}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm rounded-pill" th:classappend="${a.isActive ? 'btn-outline-danger' : 'btn-outline-success'}">
+                                                        <span th:text="${a.isActive ? 'Deactivate' : 'Activate'}">Toggle</span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Completion Records -->
+            <div class="tab-pane fade" id="tab-comp">
+                <div class="card border-0 rounded-4 shadow-sm bg-white overflow-hidden">
+                    <div class="card-body p-0">
+                        <div class="table-responsive" th:if="${completions != null && !completions.isEmpty()}">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="ps-4">Member Name</th>
+                                        <th>User ID</th>
+                                        <th>Activity Name</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="comp : ${completions}">
+                                        <td class="ps-4 fw-bold text-dark" th:text="${comp.userName}">User Name</td>
+                                        <td><span class="badge bg-light text-dark border" th:text="${comp.userId}">USR1001</span></td>
+                                        <td class="fw-semibold text-dark" th:text="${comp.fitnessTitle}">Activity Title</td>
+                                        <td class="text-muted" th:text="${#temporals.format(comp.completionDate, 'dd-MM-yyyy')}">Date</td>
+                                        <td class="text-muted" th:text="${comp.completionTime}">Time</td>
+                                        <td><span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill">COMPLETED</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:unless="${completions != null && !completions.isEmpty()}" class="p-4 text-center text-muted">
+                            No member workout completions recorded yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
